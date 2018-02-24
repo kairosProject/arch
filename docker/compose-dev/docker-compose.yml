@@ -1,0 +1,65 @@
+version: "3"
+
+networks:
+    public:
+        driver: bridge
+    internal:
+        driver: bridge
+        internal: true
+
+volumes:
+    mongo_data:
+
+env_file: ../../.env
+
+services:
+    chronos:
+        image: "php:7.2-apache"
+        ports:
+            - 80:80
+        networks:
+            - internal
+            - public
+        volumes:
+            - ../../tools/composer:/composer
+    
+    hermes:
+        image: node
+        ports:
+            - 8080:8080
+        networks:
+            - internal
+            - public
+    
+    worker:
+        image: "php:7.2-alpine"
+        networks:
+            - internal
+            - public
+        volumes:
+            - ../../tools/composer:/composer
+        
+    maildev:
+        image: djfarrelly/maildev
+        ports:
+          - 82:80
+        networks:
+            - internal
+            - public
+    
+    mongo:
+        image: mongo
+        networks:
+            - internal
+        volumes:
+            - mongo_data:/data/db
+    
+    rabbitmq:
+        image: rabbitmq
+        networks:
+            - internal
+
+    redis:
+        image: redis
+        networks:
+            - internal
