@@ -9,19 +9,26 @@ networks:
 
 volumes:
     mongo_data:
-
-env_file: ../../.env
+    chronos_cache:
+    chronos_log:
 
 services:
     chronos:
-        image: "php:7.2-apache"
+        build: ../image/php7.2-apache
         ports:
             - 80:80
         networks:
             - internal
             - public
+        env_file: ./.env
+        environment:
+            - APP_ENV=1
+            - APP_DEBUG=1
         volumes:
             - ../../tools/composer:/composer
+            - ${CHRONOS_PATH}:/var/www/html
+            - chronos_cache:/var/www/html/var/cache
+            - chronos_log:/var/www/html/var/log
     
     hermes:
         image: node
@@ -32,7 +39,7 @@ services:
             - public
     
     worker:
-        image: "php:7.2-alpine"
+        build: ../image/php7.2-alpine
         networks:
             - internal
             - public
