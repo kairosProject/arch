@@ -16,4 +16,7 @@ RUN chmod 744 /var/www/html/app/log
 COPY apache.conf /etc/apache2/sites-available/000-default.conf
 RUN a2enmod rewrite
 
+RUN apt-get install -y libsodium-dev libicu-dev
+RUN docker-php-ext-install sodium opcache mbstring intl
+
 VOLUME ["/var/www/html/app/cache", "/var/www/html/app/log"]
