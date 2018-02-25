@@ -20,7 +20,9 @@ services:
         networks:
             - internal
             - public
-        env_file: ./.env
+        env_file: 
+            - ./.env
+            - ${CHRONOS_PATH}/.env
         environment:
             - APP_ENV=1
             - APP_DEBUG=1
@@ -29,6 +31,10 @@ services:
             - ${CHRONOS_PATH}:/var/www/html
             - chronos_cache:/var/www/html/var/cache
             - chronos_log:/var/www/html/var/log
+        depends_on:
+            - rabbitmq
+            - mongo
+            - redis
     
     hermes:
         image: node
@@ -37,6 +43,8 @@ services:
         networks:
             - internal
             - public
+        depends_on:
+            - rabbitmq
     
     worker:
         build: ../image/php7.2-alpine
@@ -45,6 +53,8 @@ services:
             - public
         volumes:
             - ../../tools/composer:/composer
+        depends_on:
+            - rabbitmq
         
     maildev:
         image: djfarrelly/maildev
@@ -70,3 +80,4 @@ services:
         image: redis
         networks:
             - internal
+
