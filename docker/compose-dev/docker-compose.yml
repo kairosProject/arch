@@ -14,7 +14,7 @@ volumes:
 
 services:
     chronos:
-        build: ../image/php7.2-apache
+        build: ../image/php7.2-apache-dev
         ports:
             - 80:80
         networks:
