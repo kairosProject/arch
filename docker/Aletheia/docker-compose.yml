@@ -1,0 +1,11 @@
+version: "3"
+
+services:
+    aletheia:
+        build: .
+        network_mode: host
+        env_file: 
+            - .env
+        volumes:
+            - ../../tools/composer:/composer
+            - ${ALETHEIA_PATH}:/app
