@@ -13,13 +13,24 @@ volumes:
     chronos_log:
 
 services:
-    chronos:
-        build: ../image/php7.2-apache-dev
+    proxy:
+        image: nginx
         ports:
             - 80:80
+            - 443:443
+        volumes:
+            - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+            - ./nginx/cert.crt:/etc/nginx/cert.crt:ro
+            - ./nginx/cert.key:/etc/nginx/cert.key:ro
         networks:
             - internal
             - public
+        depends_on:
+            - chronos
+    chronos:
+        build: ../image/php7.2-apache-dev
+        networks:
+            - internal
         env_file: 
             - ./.env
             - ${CHRONOS_PATH}/.env
