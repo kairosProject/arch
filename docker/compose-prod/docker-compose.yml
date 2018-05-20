@@ -13,36 +13,19 @@ volumes:
     chronos_log:
 
 services:
-    proxy:
-        image: nginx
+    chronos:
+        build: ../image/php7.2-apache
         ports:
             - 80:80
-            - 443:443
-        volumes:
-            - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
-            - ./nginx/cert.crt:/etc/nginx/cert.crt:ro
-            - ./nginx/cert.key:/etc/nginx/cert.key:ro
-        networks:
-            - internal
-            - public
-        depends_on:
-            - chronos
-    chronos:
-        build: ../image/php7.2-apache-dev
         networks:
             - internal
             - public
         env_file: 
             - ./.env
             - ${CHRONOS_PATH}/.env
-        environment:
-            - APP_ENV=1
-            - APP_DEBUG=1
         volumes:
-            - ../../tools/composer:/composer
-            - ${CHRONOS_PATH}:/var/www/html
-            - chronos_cache:/var/www/html/var/cache
-            - chronos_log:/var/www/html/var/log
+            - chronos_cache:/var/www/html/chronos/var/cache
+            - chronos_log:/var/www/html/chronos/var/log
         depends_on:
             - rabbitmq
             - mongo
@@ -68,14 +51,6 @@ services:
         depends_on:
             - rabbitmq
         
-    maildev:
-        image: djfarrelly/maildev
-        ports:
-          - 82:80
-        networks:
-            - internal
-            - public
-    
     mongo:
         image: mongo
         networks:
